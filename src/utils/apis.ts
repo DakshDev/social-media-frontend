@@ -9,7 +9,9 @@ async function getUser(username: string) {
     const result = [...username.toLowerCase()].every((char) => allowed.includes(char));
     if (!result) return null;
     // next
-    const response = await axios.get(`${_env.backend_api_origin}/api/user/${username}`);
+    const response = await axios.get(`${_env.backend_api_origin}/api/user/${username}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error) {
     console.error(error);

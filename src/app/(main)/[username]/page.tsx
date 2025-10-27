@@ -29,6 +29,7 @@ async function Page({ params }: ProfilePageProps) {
 
 async function Profile({ uname }: { uname: string }) {
   const userInfo = await getUser(uname);
+  console.log(userInfo)
   if (userInfo === null) return notFound();
   const { avatar, banner } = userInfo as UserType;
 

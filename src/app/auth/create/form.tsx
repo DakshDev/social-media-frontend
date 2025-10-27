@@ -154,12 +154,11 @@ export default function CreateAccountForm() {
         withCredentials: true,
       })
       .then((res) => {
-        if (typeof res.data.data !== "object") return null;
-        const { username } = res.data.data;
+        if (typeof res.data !== "object") return null;
+        const { username } = res.data;
+        console.log(username)
         setCookie("username", username)
-          .then(() => {
-            window.location.reload();
-          })
+          .then(() => window.location.reload())
           .catch((err) => {
             if (err instanceof Error) {
               return toast.error(err.name);
