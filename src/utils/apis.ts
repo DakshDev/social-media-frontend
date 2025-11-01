@@ -1,8 +1,8 @@
 import _env from "@/config/env";
-import axios from "axios";
+import axios, { AxiosHeaderValue } from "axios";
 
 // Get User
-async function getUser(username: string) {
+async function getUser(username: string, cookieHeader: AxiosHeaderValue) {
   try {
     if (!username) return null;
     const allowed = "qwertyuiopasdfghjklzxcvbnm1234567890_".split("");
@@ -10,6 +10,9 @@ async function getUser(username: string) {
     if (!result) return null;
     // next
     const response = await axios.get(`${_env.backend_api_origin}/api/user/${username}`, {
+      headers: {
+        Cookie: cookieHeader,
+      },
       withCredentials: true
     });
     return response.data;

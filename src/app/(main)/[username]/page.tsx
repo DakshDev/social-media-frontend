@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Header from "./header";
 import InnerSections from "./inner_sections";
-import AboutSection from "./about";
 import { UserType } from "@/types/user_types";
+import { cookies } from "next/headers";
+
 
 export interface ProfilePageProps {
   params: { username: string };
@@ -28,21 +29,18 @@ async function Page({ params }: ProfilePageProps) {
 }
 
 async function Profile({ uname }: { uname: string }) {
-  const userInfo = await getUser(uname);
-  console.log(userInfo)
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString(); // Converts all cookies to header format
+  const userInfo: UserType  = await getUser(uname, cookieHeader);
   if (userInfo === null) return notFound();
-  const { avatar, banner } = userInfo as UserType;
 
   return (
     <div className='w-full mx-auto'>
       <Header
-        avatar={avatar}
-        banner={banner}
+        username={uname}
+        props={userInfo}
       />
       <div className='flex gap-4 mt-14'>
-        <div className='w-md h-fit sticky top-4 p-4 bg-accent/50'>
-          <AboutSection />
-        </div>
         <InnerSections />
       </div>
     </div>

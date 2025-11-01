@@ -47,6 +47,7 @@ export default function LoginAccountForm() {
   const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = validation();
+    console.log(result)
     if (!result) return;
     setIsLoading(true);
 
@@ -54,6 +55,7 @@ export default function LoginAccountForm() {
       email,
       password,
     };
+    
     axios
       .post(`${_env.backend_api_origin}/api/auth/login`, data, {
         withCredentials: true,
