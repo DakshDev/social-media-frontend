@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import _env from "@/config/env";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -55,11 +54,9 @@ export default function LoginAccountForm() {
       email,
       password,
     };
-    
+
     axios
-      .post(`${_env.backend_api_origin}/api/auth/login`, data, {
-        withCredentials: true,
-      })
+      .post("/api/auth/login", data, {withCredentials: true})
       .then((res) => {
         if (typeof res.data !== "object") return null;
         const { username } = res.data;
@@ -73,15 +70,12 @@ export default function LoginAccountForm() {
           });
       })
       .catch((err) => {
-        if (err instanceof AxiosError) {
-          return toast.error(err.response?.data.error || err.name);
-        }
+        if (err instanceof AxiosError) return toast.error(err.response?.data.error || `Invalid Logging`);
         toast.error("Unknown Error");
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+      .finally(() => setIsLoading(false));
+  };  
+
   return (
     <div className='max-w-md w-full p-5 bg-accent/40 rounded-sm'>
       <ToastContainer

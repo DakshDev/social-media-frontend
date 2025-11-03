@@ -1,20 +1,25 @@
-# Build
+# ---- Build Stage ----
 FROM node:18 AS builder
 
-WORKDIR /app/
-COPY package*.json .
+WORKDIR /app
+
+COPY package*.json ./
 RUN npm ci
+COPY . .
 RUN npm run build
 
-# Runner
+# ---- Production Stage ----
 FROM node:18-alpine AS runner
 
-WORKDIR /app/
-COPY --from=builder /app/build /build
-COPY --from=builder /app/node_modules /node_modules
-COPY --from=builder /app/package*.json .
+WORKDIR /app
 
-ENV PORT=10000
-EXPOSE 10000
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
 
-RUN npm start
+ENV NODE_ENV=production
+ENV PORT=3000
+EXPOSE 3000
+
+CMD ["npm", "start"]

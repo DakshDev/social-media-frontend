@@ -3,7 +3,6 @@
 import SelectOptionUI from "@/components/other/selectOptionUI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import _env from "@/config/env";
 import { checkValidUsername } from "@/utils/apis";
 import debounce from "@/utils/debounce";
 import setCookie from "@/utils/setCookie";
@@ -150,31 +149,22 @@ export default function CreateAccountForm() {
     };
 
     axios
-      .post(`${_env.backend_api_origin}/api/auth/create`, data, {
-        withCredentials: true,
-      })
+      .post(`/api/auth/create`, data, {withCredentials: true})
       .then((res) => {
         if (typeof res.data !== "object") return null;
         const { username } = res.data;
-        console.log(username)
         setCookie("username", username)
           .then(() => window.location.reload())
           .catch((err) => {
-            if (err instanceof Error) {
-              return toast.error(err.name);
-            }
+            if (err instanceof Error) return toast.error(err.name);
             toast.error("Cookie error");
           });
       })
       .catch((err) => {
-        if (err instanceof AxiosError) {
-          return toast.error(err.response?.data?.error || "Invalid Creation");
-        }
-        toast.error("unknown error");
+        if (err instanceof AxiosError) return toast.error(err.response?.data?.error || "Invalid Creation");
+        toast.error("Unknown error");
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally(() => setIsLoading(false));
   };
 
   return (
