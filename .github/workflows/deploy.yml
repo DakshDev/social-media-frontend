@@ -8,55 +8,31 @@ on:
 
 jobs:
   build:
-    name: 🧱 Build & Test
+    name: Build & Test
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js (use v18 for Render compatibility)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Build Next.js app
       - name: Build Next.js app
         run: npm run build
-
-      # 5️⃣ Upload build output for next job
-      - name: Upload build output
-        uses: actions/upload-artifact@v4
-        with:
-          name: next-build
-          path: .next/
 
   deploy:
     name: 🚀 Deploy to Render
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     steps:
-      # 1️⃣ Checkout repo again (GitHub Actions fresh job)
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # 2️⃣ Download built app
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: next-build
-          path: .next/
-
-      # 3️⃣ Deploy to Render via API
       - name: Trigger Render Deploy
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
@@ -67,6 +43,5 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${RENDER_API_KEY}"
 
-      # 4️⃣ Confirm done
       - name: ✅ Done
-        run: echo "✅ Deployment completed successfully!"
+        run: echo "✅ Render deployment triggered successfully!"
